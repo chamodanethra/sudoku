@@ -20,9 +20,9 @@ class Grid extends Component {
       }
     }
 
-    let start = Date.now();
     const wasm = import("@chamodanethra/sudoku_solver-wasm");
     wasm.then(wasm => {
+      let start = Date.now();
       let stringOutput = wasm.calculate(stringInput);
       let lines = stringOutput.split("\n");
       for (let i = 0; i < this.answer.length; i++) {
@@ -30,7 +30,7 @@ class Grid extends Component {
           this.answer[i][j] = Number(lines[i][j]);      
         }
       }
-      console.log(Date.now() - start);
+      console.log("Time taken to solve : " + (Date.now() - start) + "ms");
     });
   }
 

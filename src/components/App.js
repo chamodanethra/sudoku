@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { connect } from 'react-redux';
 
 import './App.css';
 import Grid from './Grid';
@@ -33,10 +32,4 @@ class App extends Component{
   }
 }
 
-const mapStateToProps = (state) => {
-  return { 
-    isClicked: state.isClicked,
-  };
-}
-
-export default connect(mapStateToProps)(App);
+export default App;
