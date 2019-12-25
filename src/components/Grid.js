@@ -3,51 +3,33 @@ import { connect } from 'react-redux';
 
 import './Grid.css';
 
+const readTextFile = (file) => {
+  var rawFile = new XMLHttpRequest();
+  rawFile.open("GET", file, false);
+  let data = null;
+  rawFile.onreadystatechange = () => {
+      if (rawFile.readyState === 4) {
+          if (rawFile.status === 200 || rawFile.status === 0) {
+              data = rawFile.responseText;
+          }
+      }
+  };
+  rawFile.send(null);
+  return data;
+};
+
+const file = require("./p096_sudoku.txt");
+const stringInput = readTextFile(file);
+
 class Grid extends Component {
 
-  constructor(){
+  constructor() {
     super();
     this.grid = this.makeArray(9, 9);
     this.puzzle = this.makeArray(9, 9);
     this.answer = this.makeArray(9, 9);
-
-    const file = require("./p096_sudoku.txt");
-    let stringInput = this.readTextFile(file);
-    let lines = stringInput.split("\n");
-    for (let i = 0; i < this.puzzle.length; i++) {
-      for (let j = 0; j < this.puzzle.length; j++) {
-        this.puzzle[i][j] = Number(lines[i][j]);      
-      }
-    }
-
-    const wasm = import("@chamodanethra/sudoku_solver-wasm");
-    wasm.then(wasm => {
-      let start = Date.now();
-      let stringOutput = wasm.calculate(stringInput);
-      let lines = stringOutput.split("\n");
-      for (let i = 0; i < this.answer.length; i++) {
-        for (let j = 0; j < this.answer.length; j++) {
-          this.answer[i][j] = Number(lines[i][j]);      
-        }
-      }
-      console.log("Time taken to solve : " + (Date.now() - start) + "ms");
-    });
   }
-
-  readTextFile(file) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    let data = null;
-    rawFile.onreadystatechange = () => {
-        if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status === 0) {
-                data = rawFile.responseText;
-            }
-        }
-    };
-    rawFile.send(null);
-    return data;
-  };
+  
 
   makeArray(d1, d2) {
     var arr = [];
@@ -58,6 +40,37 @@ class Grid extends Component {
   }
   
   render(){
+    if (!this.props.isClicked) {
+      let randomPuzzleID = Math.floor(Math.random() * 50);
+      if (randomPuzzleID === 50) {
+        randomPuzzleID = 49;
+      }
+
+      let lines = stringInput.split("\n");
+      let startIndex = randomPuzzleID * 10 + 1;
+      let randomStringInput = "";
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          this.puzzle[i][j] = Number(lines[startIndex + i][j]);
+          randomStringInput = randomStringInput + this.puzzle[i][j];      
+        }
+        randomStringInput += "\n";
+      }
+
+      const wasm = import("@chamodanethra/sudoku_solver-wasm");
+      wasm.then(wasm => {
+        let start = Date.now();
+        let stringOutput = wasm.calculate(randomStringInput);
+        let lines = stringOutput.split("\n");
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            this.answer[i][j] = Number(lines[i][j]);      
+          }
+        }
+        console.log("Time taken to solve : " + (Date.now() - start) + "ms");
+      });
+    }
+
     this.grid = this.props.isClicked ? this.answer : this.puzzle;
     let rows = [];
     for (let i = 0; i < 9; i++){
