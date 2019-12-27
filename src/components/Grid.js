@@ -59,7 +59,8 @@ class Grid extends Component {
 
       const wasm = import("@chamodanethra/sudoku_solver-wasm");
       wasm.then(wasm => {
-        let start = Date.now();
+        let microSeconds = require('microseconds');
+        let start = microSeconds.now();
         let stringOutput = wasm.calculate(randomStringInput);
         let lines = stringOutput.split("\n");
         for (let i = 0; i < 9; i++) {
@@ -67,7 +68,7 @@ class Grid extends Component {
             this.answer[i][j] = Number(lines[i][j]);      
           }
         }
-        console.log("Time taken to solve : " + (Date.now() - start) + "ms");
+        console.log("Time taken to solve : " + (microSeconds.now() - start) + "μs");
       });
     }
 
