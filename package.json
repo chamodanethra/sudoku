@@ -2,7 +2,7 @@
   "name": "wireman",
   "version": "0.1.0",
   "private": false,
-  "homepage": "http://chamodanethra.github.io/sudoku",
+  "homepage": "http://wasmreact.com",
   "dependencies": {
     "@chamodanethra/sudoku_solver-wasm": "^0.1.0",
     "@trendmicro/react-sidenav": "^0.4.5",

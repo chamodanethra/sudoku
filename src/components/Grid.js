@@ -38,6 +38,20 @@ class Grid extends Component {
     }
     return arr;
   }
+
+  async callWasmCalculate(randomStringInput) {
+    const wasm = await import("@chamodanethra/sudoku_solver-wasm");
+    let microSeconds = require('microseconds');
+    let start = microSeconds.now();
+    let stringOutput = wasm.calculate(randomStringInput);
+    let lines = stringOutput.split("\n");
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        this.answer[i][j] = Number(lines[i][j]);      
+      }
+    }
+    console.log("Time taken to solve : " + (microSeconds.now() - start) + "μs");
+  }
   
   render(){
     if (!this.props.isClicked) {
@@ -57,19 +71,7 @@ class Grid extends Component {
         randomStringInput += "\n";
       }
 
-      const wasm = import("@chamodanethra/sudoku_solver-wasm");
-      wasm.then(wasm => {
-        let microSeconds = require('microseconds');
-        let start = microSeconds.now();
-        let stringOutput = wasm.calculate(randomStringInput);
-        let lines = stringOutput.split("\n");
-        for (let i = 0; i < 9; i++) {
-          for (let j = 0; j < 9; j++) {
-            this.answer[i][j] = Number(lines[i][j]);      
-          }
-        }
-        console.log("Time taken to solve : " + (microSeconds.now() - start) + "μs");
-      });
+      this.callWasmCalculate(randomStringInput);
     }
 
     this.grid = this.props.isClicked ? this.answer : this.puzzle;
